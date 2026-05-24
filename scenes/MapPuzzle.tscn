@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://d3m4hxtywmni1"]
+
+[ext_resource type="Script" uid="uid://j6ljlpg0egd8" path="res://scripts/MapPuzzle.gd" id="1_7rk1l"]
+[ext_resource type="Texture2D" uid="uid://cjnfav3wsvc4x" path="res://images/Mapa_Riesgo.png" id="2_tc4ds"]
+
+[node name="MapPuzzle" type="Node2D" unique_id=2024003352]
+script = ExtResource("1_7rk1l")
+map_texture = ExtResource("2_tc4ds")

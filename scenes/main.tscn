@@ -24,3 +24,10 @@ offset_bottom = 183.0
 text = "
 
 "
+
+[node name="MensajeLabel" type="Label" parent="." unique_id=2021150658]
+offset_left = 992.0
+offset_top = 404.0
+offset_right = 1145.0
+offset_bottom = 455.0
+theme_override_font_sizes/font_size = 15
