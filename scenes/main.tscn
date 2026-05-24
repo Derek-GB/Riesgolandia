@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cp3quq835nmee"]
+
+[ext_resource type="Script" uid="uid://721euuos45tc" path="res://scripts/main.gd" id="1_0wfyh"]
+[ext_resource type="PackedScene" uid="uid://c456hb1ulbl35" path="res://scenes/board.tscn" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://cf0lt2ras06so" path="res://scenes/dado.tscn" id="3_sugp2"]
+
+[node name="Main" type="Node2D" unique_id=1016960782]
+script = ExtResource("1_0wfyh")
+
+[node name="Mapa" parent="." unique_id=1363300375 instance=ExtResource("1_o5qli")]
+position = Vector2(567.125, 321.25003)
+scale = Vector2(0.93186873, 0.92413294)
+
+[node name="Dado" parent="." unique_id=1394427015 instance=ExtResource("3_sugp2")]
+offset = Vector2(993, 470)
+scale = Vector2(0.3, 0.3)
+transform = Transform2D(0.3, 0, 0, 0.3, 993, 470)
+
+[node name="DadoLabel" type="Label" parent="." unique_id=594631970]
+offset_left = 10.0
+offset_top = 108.0
+offset_right = 11.0
+offset_bottom = 183.0
+text = "
+
+"

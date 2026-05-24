@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://c456hb1ulbl35"]
+
+[ext_resource type="Texture2D" uid="uid://cp7evaqmfo0cb" path="res://images/Captura de pantalla 2026-05-23 192525.png" id="1_bw3vb"]
+[ext_resource type="Script" uid="uid://djhlhmcom7vcl" path="res://scripts/board.gd" id="2_nglv8"]
+[ext_resource type="PackedScene" uid="uid://dmiympugo4r4x" path="res://scenes/ficha.tscn" id="3_fv4ni"]
+
+[node name="Mapa" type="Sprite2D" unique_id=1363300375 node_paths=PackedStringArray("path_node")]
+texture = ExtResource("1_bw3vb")
+script = ExtResource("2_nglv8")
+path_node = NodePath("Camino")
+
+[node name="Camino" type="Node2D" parent="." unique_id=1921487203]
+
+[node name="Inicio" type="Marker2D" parent="Camino" unique_id=419156754]
+position = Vector2(-72, 330)
+
+[node name="C1" type="Marker2D" parent="Camino" unique_id=1586332190]
+position = Vector2(-179, 249)
+
+[node name="C2" type="Marker2D" parent="Camino" unique_id=749200269]
+position = Vector2(-253, 180)
+
+[node name="C3" type="Marker2D" parent="Camino" unique_id=1398346934]
+position = Vector2(-279, 66)
+
+[node name="C4" type="Marker2D" parent="Camino" unique_id=801708149]
+position = Vector2(-230, -11)
+
+[node name="C5" type="Marker2D" parent="Camino" unique_id=1579187335]
+position = Vector2(-189, -90)
+
+[node name="C6" type="Marker2D" parent="Camino" unique_id=808060044]
+position = Vector2(-142, -171)
+
+[node name="C7" type="Marker2D" parent="Camino" unique_id=1070666184]
+position = Vector2(-9, -263)
+
+[node name="Ficha" parent="." unique_id=1007468202 instance=ExtResource("3_fv4ni")]
+position = Vector2(0, 280)
+scale = Vector2(0.22, 0.22)

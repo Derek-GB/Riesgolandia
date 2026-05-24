@@ -1,0 +1,10 @@
+# Godot 4+ specific ignores
+.godot/
+.import/
+*.import
+export/
+tmp/
+# Mono/C# files (if not using C#)
+.mono/
+# Android build folder
+/android/

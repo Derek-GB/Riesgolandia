@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://dmiympugo4r4x"]
+
+[ext_resource type="Script" uid="uid://ccfum6mbyyp8i" path="res://scripts/ficha.gd" id="1_nkg04"]
+[ext_resource type="PackedScene" uid="uid://2jjifk5p75cj" path="res://models/chess_pawn.glb" id="2_gfo57"]
+
+[node name="Ficha" type="Node2D" unique_id=1007468202]
+script = ExtResource("1_nkg04")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1410694779]
+offset_left = -261.0
+offset_top = -238.0
+offset_right = 251.0
+offset_bottom = 274.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=2132006543]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport" unique_id=2069475107]
+transform = Transform3D(0.9996668, -0.017766811, 0.018722314, -4.6562654e-10, 0.7253744, 0.68835455, -0.025810553, -0.6881252, 0.72513276, 0.80754066, 5.410544, 3.6900454)
+
+[node name="MeshFicha" parent="SubViewportContainer/SubViewport" unique_id=1633422855 instance=ExtResource("2_gfo57")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport" unique_id=833947648]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)

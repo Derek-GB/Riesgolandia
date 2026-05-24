@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://cf0lt2ras06so"]
+
+[ext_resource type="Script" uid="uid://4tpok4v4tp0w" path="res://scripts/dado.gd" id="1_nntwd"]
+[ext_resource type="PackedScene" uid="uid://binnmhdqouwrr" path="res://models/dice.glb" id="2_tbv0i"]
+
+[node name="Dado" type="CanvasLayer" unique_id=1959150561]
+script = ExtResource("1_nntwd")
+
+[node name="DiceContainer" type="Control" parent="." unique_id=76503812]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="DiceContainer" unique_id=1798822811]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SubViewport" type="SubViewport" parent="DiceContainer/SubViewportContainer" unique_id=1259456872]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="DiceContainer/SubViewportContainer/SubViewport" unique_id=285837503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 32.707)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="DiceContainer/SubViewportContainer/SubViewport" unique_id=473051039]
+transform = Transform3D(-0.9931028, -0.07519261, -0.08996076, 0.1036444, -0.9217204, -0.3737506, -0.0548152, -0.3804968, 0.92315656, -37.349934, -26.582685, 1.4478645)
+
+[node name="MeshDado" parent="DiceContainer/SubViewportContainer/SubViewport" unique_id=2119051948 instance=ExtResource("2_tbv0i")]
+
+[node name="ClickArea" type="Button" parent="DiceContainer" unique_id=776950448]
+layout_mode = 0
+offset_right = 516.0
+offset_bottom = 511.0
