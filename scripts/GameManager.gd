@@ -29,10 +29,10 @@ func _ready() -> void:
 
 	var scene = get_tree().current_scene
 
-	# Buscar MensajeLabel automáticamente
-	if scene.has_node("MensajeLabel"):
+	# Buscar MensajeLabel — ahora está bajo UI/
+	if scene.has_node("UI/MensajeLabel"):
 
-		mensaje_label = scene.get_node("MensajeLabel")
+		mensaje_label = scene.get_node("UI/MensajeLabel")
 
 		mensaje_label.visible = false
 

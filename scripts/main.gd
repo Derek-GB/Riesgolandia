@@ -1,20 +1,24 @@
-extends Node2D
+extends Node3D
+
+@export var camera_smooth_speed: float = 5.0
 
 @onready var mapa = $Mapa
 @onready var ficha = $Mapa/Ficha
-@onready var dado = $Dado
-@onready var dado_label: Label = $DadoLabel
-@onready var btn_salir: Button = $Salir
-@onready var btn_tirar_3: Button = $Tirar_3
-@onready var btn_reiniciar: Button = $Reiniciar
+@onready var camera: Camera3D = $Camera3D
+@onready var dado = $UI/Dado
+@onready var dado_label: Label = $UI/DadoLabel
+@onready var btn_salir: Button = $UI/Salir
+@onready var btn_tirar_3: Button = $UI/Tirar_3
+@onready var btn_reiniciar: Button = $UI/Reiniciar
 
 # =====================================================
 # SONIDOS
 # =====================================================
-@onready var dice_sound: AudioStreamPlayer = $DiceSound
-@onready var move_sound: AudioStreamPlayer = $MoveSound
+@onready var dice_sound: AudioStreamPlayer = $UI/DiceSound
+@onready var move_sound: AudioStreamPlayer = $UI/MoveSound
 
 var game_over: bool = false
+var camera_offset: Vector3 = Vector3.ZERO
 
 
 # =====================================================
@@ -22,7 +26,7 @@ var game_over: bool = false
 # =====================================================
 func _ready() -> void:
 
-	var wp: Array[Vector2] = mapa.get_waypoints()
+	var wp: Array[Vector3] = mapa.get_waypoints()
 
 	print("Main: waypoints cargados =", wp.size())
 
@@ -54,7 +58,29 @@ func _ready() -> void:
 	btn_tirar_3.pressed.connect(_on_tirar_3)
 	btn_reiniciar.pressed.connect(_on_reiniciar)
 
+	# =====================================================
+	# OFFSET DE CÁMARA
+	# Respeta la posición que pusiste en el editor
+	# =====================================================
+	camera_offset = camera.global_position - ficha.global_position
+
 	print("Main: _ready completo")
+
+
+# =====================================================
+# PROCESS — SEGUIR FICHA CON OFFSET
+# =====================================================
+func _process(delta: float) -> void:
+
+	if not ficha or not camera:
+		return
+
+	var target: Vector3 = ficha.global_position + camera_offset
+
+	camera.global_position = camera.global_position.lerp(
+		target,
+		clamp(delta * camera_smooth_speed, 0.0, 1.0)
+	)
 
 
 # =====================================================

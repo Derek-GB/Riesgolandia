@@ -1,15 +1,20 @@
-extends Node2D
+extends Node3D
 
-var waypoints: Array[Vector2] = []
+var waypoints: Array[Vector3] = []
 var current_index: int = 0
 
-@export var speed: float = 300.0
+@export var speed: float = 8.0
+@export var jump_height: float = 1.2
 
 signal reached_end
 signal stepped_on(index: int)
 
 
-func setup(board_waypoints: Array[Vector2]) -> void:
+# =========================================================
+# SETUP
+# =========================================================
+func setup(board_waypoints: Array[Vector3]) -> void:
+
 	waypoints = board_waypoints
 	current_index = 0
 
@@ -21,7 +26,11 @@ func setup(board_waypoints: Array[Vector2]) -> void:
 		push_warning("Ficha: no recibió waypoints")
 
 
+# =========================================================
+# MOVER PASOS
+# =========================================================
 func move_steps(steps: int) -> void:
+
 	if waypoints.is_empty():
 		push_warning("Ficha: no hay waypoints para moverse")
 		return
@@ -32,6 +41,7 @@ func move_steps(steps: int) -> void:
 	print("Ficha: move_steps llamado con pasos =", steps, " current_index =", current_index)
 
 	for i in range(steps):
+
 		if current_index >= waypoints.size() - 1:
 			print("Ficha: llegó al final en index", current_index)
 			reached_end.emit()
@@ -50,24 +60,30 @@ func move_steps(steps: int) -> void:
 		reached_end.emit()
 
 
-func _move_to(target: Vector2) -> void:
+# =========================================================
+# MOVER A POSICIÓN CON SALTO
+# =========================================================
+func _move_to(target: Vector3) -> void:
+
 	if speed <= 0:
-		global_position = target
+		global_position  = target
 		return
 
-	var distance := global_position.distance_to(target)
-	var duration := distance / speed
+	var start: Vector3    = global_position 
+	var distance: float   = start.distance_to(target)
+	var duration: float   = max(0.05, distance / speed)
+	var elapsed: float    = 0.0
 
-	if duration < 0.05:
-		duration = 0.05
+	while elapsed < duration:
 
-	var tween := create_tween()
+		await get_tree().process_frame
 
-	tween.tween_property(
-		self,
-		"global_position",
-		target,
-		duration
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		elapsed += get_process_delta_time()
 
-	await tween.finished
+		var t: float          = min(elapsed / duration, 1.0)
+		var horizontal: Vector3 = start.lerp(target, t)
+		var height: float     = sin(t * PI) * jump_height
+
+		global_position  = Vector3(horizontal.x, height, horizontal.z)
+
+	global_position  = target
