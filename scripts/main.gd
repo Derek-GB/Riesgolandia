@@ -4,6 +4,9 @@ extends Node2D
 @onready var ficha = $Mapa/Ficha
 @onready var dado = $Dado
 @onready var dado_label: Label = $DadoLabel
+@onready var btn_salir: Button = $Salir
+@onready var btn_tirar_3: Button = $Tirar_3
+@onready var btn_reiniciar: Button = $Reiniciar
 
 var game_over: bool = false
 
@@ -28,9 +31,36 @@ func _ready() -> void:
 	GameManager.turn_changed.connect(_on_turn_changed)
 
 	dado_label.text = "Tira el dado"
+	
+	# --- Botones ---
+	btn_salir.pressed.connect(_on_salir)
+	btn_tirar_3.pressed.connect(_on_tirar_3)
+	btn_reiniciar.pressed.connect(_on_reiniciar)
 
 	print("Main: _ready completo")
 
+func _on_salir() -> void:
+	get_tree().quit()
+
+
+func _on_tirar_3() -> void:
+	if game_over:
+		return
+	# Salta animación del dado y simula directamente un 3
+	dado_label.text = "Tiraste un 3"
+	dado.set_locked(true)
+	await GameManager.on_dice_rolled(3)
+	if not game_over:
+		dado.set_locked(false)
+
+
+func _on_reiniciar() -> void:
+	# Limpia el GameManager antes de recargar
+	GameManager.tokens.clear()
+	GameManager.current_player = 0
+	GameManager.is_player_moving = false
+	GameManager.minijuego_activo = false
+	get_tree().reload_current_scene()
 
 func _on_dice_rolled(n: int) -> void:
 	if game_over:

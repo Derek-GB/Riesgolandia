@@ -8,13 +8,13 @@
 script = ExtResource("1_0wfyh")
 
 [node name="Mapa" parent="." unique_id=1363300375 instance=ExtResource("1_o5qli")]
-position = Vector2(567.125, 321.25003)
-scale = Vector2(0.93186873, 0.92413294)
+position = Vector2(921, 542)
+scale = Vector2(1.634, 1.5)
 
 [node name="Dado" parent="." unique_id=1394427015 instance=ExtResource("3_sugp2")]
-offset = Vector2(993, 470)
+offset = Vector2(1750, 900)
 scale = Vector2(0.3, 0.3)
-transform = Transform2D(0.3, 0, 0, 0.3, 993, 470)
+transform = Transform2D(0.3, 0, 0, 0.3, 1750, 900)
 
 [node name="DadoLabel" type="Label" parent="." unique_id=594631970]
 offset_left = 10.0
@@ -31,3 +31,24 @@ offset_top = 404.0
 offset_right = 1145.0
 offset_bottom = 455.0
 theme_override_font_sizes/font_size = 15
+
+[node name="Salir" type="Button" parent="." unique_id=394568099]
+offset_left = 1673.0
+offset_top = 39.0
+offset_right = 1879.0
+offset_bottom = 106.0
+text = "Salir"
+
+[node name="Tirar_3" type="Button" parent="." unique_id=182608097]
+offset_left = 1673.0
+offset_top = 130.0
+offset_right = 1879.0
+offset_bottom = 197.0
+text = "Tirar 3"
+
+[node name="Reiniciar" type="Button" parent="." unique_id=1238330896]
+offset_left = 1673.0
+offset_top = 232.0
+offset_right = 1879.0
+offset_bottom = 299.0
+text = "Reiniciar"
