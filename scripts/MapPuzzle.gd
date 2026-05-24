@@ -4,7 +4,7 @@
 
 extends Node2D
 
-signal puzzle_completed(moves: int)
+signal puzzle_completed
 
 # =========================================================
 # CONFIGURACIÓN
@@ -12,14 +12,13 @@ signal puzzle_completed(moves: int)
 @export var map_texture: Texture2D
 @export var cols: int = 4
 @export var rows: int = 3
-@export var piece_gap: int = 3
-@export var show_numbers: bool = false
+@export var piece_gap: int = 6
 
 # =========================================================
 # RESOLUCIÓN
 # =========================================================
-const SCREEN_SIZE = Vector2(1152, 648)
-const MODAL_SIZE = Vector2(820, 500)
+const SCREEN_SIZE = Vector2(1920, 1080)
+const MODAL_SIZE = Vector2(1600, 920)
 
 # =========================================================
 # VARIABLES
@@ -28,7 +27,6 @@ var piece_size: Vector2
 var pieces: Array = []
 
 var selected_index: int = -1
-var moves: int = 0
 var game_active: bool = false
 
 # =========================================================
@@ -37,21 +35,14 @@ var game_active: bool = false
 var overlay: ColorRect
 var modal: Panel
 var board_container: Node2D
-
-var moves_label: Label
-var status_label: Label
-var restart_button: Button
-var close_button: Button
-var title_label: Label
-var instruction_label: Label
 var guide_preview: TextureRect
+var surrender_button: Button
 
 # =========================================================
 # COLORES
 # =========================================================
 const COLOR_PANEL = Color("#2A1F12")
 const COLOR_GOLD = Color("#D4AF37")
-const COLOR_GOLD_DIM = Color("#8A6E2A")
 const COLOR_SELECTED = Color(1.0, 0.878, 0.251, 0.35)
 const COLOR_CORRECT = Color(0.251, 1.0, 0.502, 0.2)
 const COLOR_OVERLAY = Color(0, 0, 0, 0.7)
@@ -65,8 +56,6 @@ func _ready() -> void:
 
 	if map_texture:
 		start_game()
-	else:
-		status_label.text = "Asigna una textura"
 
 
 # =========================================================
@@ -76,20 +65,18 @@ func start_game() -> void:
 
 	_clear_pieces()
 
-	moves = 0
 	selected_index = -1
 	game_active = true
 
 	overlay.visible = true
 
 	if map_texture == null:
-		push_error("No se asignó map_texture")
 		return
 
 	guide_preview.texture = map_texture
 
-	var available_width = 700.0
-	var available_height = 280.0
+	var available_width = 1050.0
+	var available_height = 620.0
 
 	piece_size = Vector2(
 		available_width / cols,
@@ -99,8 +86,6 @@ func start_game() -> void:
 	_create_pieces()
 
 	_shuffle_pieces()
-
-	_update_ui()
 
 	_animate_modal()
 
@@ -156,26 +141,6 @@ func _create_pieces() -> void:
 
 			highlight.position = Vector2(piece_gap, piece_gap)
 
-			if show_numbers:
-
-				var lbl := Label.new()
-
-				lbl.text = str(index)
-
-				lbl.add_theme_color_override(
-					"font_color",
-					COLOR_GOLD
-				)
-
-				lbl.add_theme_font_size_override(
-					"font_size",
-					18
-				)
-
-				sprite.add_child(lbl)
-
-				lbl.position = Vector2(10, 10)
-
 			pieces.append({
 				"sprite": sprite,
 				"highlight": highlight,
@@ -205,8 +170,8 @@ func _shuffle_pieces() -> void:
 # =========================================================
 func _apply_positions() -> void:
 
-	var start_x = 40
-	var start_y = 180
+	var start_x = 70
+	var start_y = 240
 
 	for piece in pieces:
 
@@ -255,10 +220,6 @@ func _input(event: InputEvent) -> void:
 				_swap_pieces(selected_index, clicked_index)
 
 				selected_index = -1
-
-				moves += 1
-
-				_update_ui()
 
 				_check_win()
 
@@ -341,152 +302,23 @@ func _check_win() -> void:
 
 	game_active = false
 
-	_show_win_overlay()
-
-	emit_signal("puzzle_completed", moves)
+	emit_signal("puzzle_completed")
 
 
 # =========================================================
-# WIN UI
+# RENDIRSE
 # =========================================================
-func _show_win_overlay() -> void:
+func _on_surrender_pressed() -> void:
 
 	game_active = false
 
-	# ============================================
-	# PANEL VICTORIA
-	# ============================================
-	var win_panel := Panel.new()
+	for piece in pieces:
 
-	win_panel.size = Vector2(520, 150)
+		piece["current_pos"] = piece["correct_pos"]
 
-	win_panel.position = Vector2(
-		(MODAL_SIZE.x - win_panel.size.x) / 2,
-		(MODAL_SIZE.y - win_panel.size.y) / 2 + 70
-	)
+	_apply_positions()
 
-	var style := StyleBoxFlat.new()
-
-	style.bg_color = Color("#1E160C")
-
-	style.border_color = COLOR_GOLD
-
-	style.border_width_left = 3
-	style.border_width_top = 3
-	style.border_width_right = 3
-	style.border_width_bottom = 3
-
-	style.corner_radius_top_left = 16
-	style.corner_radius_top_right = 16
-	style.corner_radius_bottom_left = 16
-	style.corner_radius_bottom_right = 16
-
-	win_panel.add_theme_stylebox_override("panel", style)
-
-	modal.add_child(win_panel)
-
-	win_panel.move_to_front()
-
-	# ============================================
-	# TITULO
-	# ============================================
-	var title := Label.new()
-
-	title.text = "¡MAPA CONSEGUIDO!"
-
-	title.position = Vector2(90, 18)
-
-	title.size = Vector2(340, 40)
-
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	title.add_theme_font_size_override(
-		"font_size",
-		28
-	)
-
-	title.add_theme_color_override(
-		"font_color",
-		COLOR_GOLD
-	)
-
-	win_panel.add_child(title)
-
-	# ============================================
-	# MENSAJE
-	# ============================================
-	var description := Label.new()
-
-	description.text = "¡Excelente trabajo!\nAhora conoces mejor las zonas de riesgo de tu escuela."
-
-	description.position = Vector2(35, 60)
-
-	description.size = Vector2(450, 55)
-
-	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-
-	description.add_theme_font_size_override(
-		"font_size",
-		18
-	)
-
-	description.add_theme_color_override(
-		"font_color",
-		Color.WHITE
-	)
-
-	win_panel.add_child(description)
-
-	# ============================================
-	# MOVIMIENTOS
-	# ============================================
-	var moves_label_finish := Label.new()
-
-	moves_label_finish.text = "Completado en %d movimientos" % moves
-
-	moves_label_finish.position = Vector2(120, 118)
-
-	moves_label_finish.size = Vector2(280, 30)
-
-	moves_label_finish.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	moves_label_finish.add_theme_font_size_override(
-		"font_size",
-		16
-	)
-
-	moves_label_finish.add_theme_color_override(
-		"font_color",
-		COLOR_GOLD
-	)
-
-	win_panel.add_child(moves_label_finish)
-
-	# ============================================
-	# ANIMACIÓN
-	# ============================================
-	win_panel.scale = Vector2(0.7, 0.7)
-
-	var tween := create_tween()
-
-	tween.tween_property(
-		win_panel,
-		"scale",
-		Vector2.ONE,
-		0.2
-	)
-
-	# ============================================
-	# STATUS
-	# ============================================
-	status_label.text = "Mapa restaurado correctamente"
-
-	status_label.add_theme_color_override(
-		"font_color",
-		COLOR_GOLD
-	)
+	emit_signal("puzzle_completed")
 
 
 # =========================================================
@@ -494,9 +326,6 @@ func _show_win_overlay() -> void:
 # =========================================================
 func _build_ui() -> void:
 
-	# =====================================================
-	# OVERLAY
-	# =====================================================
 	overlay = ColorRect.new()
 
 	overlay.color = COLOR_OVERLAY
@@ -504,9 +333,6 @@ func _build_ui() -> void:
 
 	add_child(overlay)
 
-	# =====================================================
-	# MODAL
-	# =====================================================
 	modal = Panel.new()
 
 	modal.size = MODAL_SIZE
@@ -514,9 +340,6 @@ func _build_ui() -> void:
 
 	add_child(modal)
 
-	# =====================================================
-	# ESTILO
-	# =====================================================
 	var style := StyleBoxFlat.new()
 
 	style.bg_color = COLOR_PANEL
@@ -538,50 +361,26 @@ func _build_ui() -> void:
 		style
 	)
 
-	# =====================================================
-	# CONTENEDOR TABLERO
-	# =====================================================
 	board_container = Node2D.new()
 
 	modal.add_child(board_container)
 
 	# =====================================================
-	# TITULO
-	# =====================================================
-	title_label = Label.new()
-
-	title_label.text = "ROMPECABEZAS DEL MAPA"
-
-	title_label.position = Vector2(220, 15)
-
-	title_label.add_theme_font_size_override(
-		"font_size",
-		24
-	)
-
-	title_label.add_theme_color_override(
-		"font_color",
-		COLOR_GOLD
-	)
-
-	modal.add_child(title_label)
-
-	# =====================================================
 	# TEXTO EDUCATIVO
 	# =====================================================
-	instruction_label = Label.new()
+	var instruction_label := Label.new()
 
 	instruction_label.text = "Participaste en la elaboración del mapa de riesgo escolar."
 
-	instruction_label.position = Vector2(30, 55)
+	instruction_label.position = Vector2(70, 40)
 
-	instruction_label.size = Vector2(400, 70)
+	instruction_label.size = Vector2(820, 100)
 
 	instruction_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	instruction_label.add_theme_font_size_override(
 		"font_size",
-		18
+		30
 	)
 
 	instruction_label.add_theme_color_override(
@@ -592,29 +391,29 @@ func _build_ui() -> void:
 	modal.add_child(instruction_label)
 
 	# =====================================================
-	# BORDE PREVIEW
+	# MINI MAPA
 	# =====================================================
 	var preview_border := Panel.new()
 
-	preview_border.position = Vector2(630, 50)
+	preview_border.position = Vector2(1260, 40)
 
-	preview_border.size = Vector2(160, 110)
+	preview_border.size = Vector2(280, 200)
 
 	var preview_style := StyleBoxFlat.new()
 
 	preview_style.bg_color = Color(0, 0, 0, 0.2)
 
-	preview_style.border_width_left = 2
-	preview_style.border_width_top = 2
-	preview_style.border_width_right = 2
-	preview_style.border_width_bottom = 2
+	preview_style.border_width_left = 3
+	preview_style.border_width_top = 3
+	preview_style.border_width_right = 3
+	preview_style.border_width_bottom = 3
 
 	preview_style.border_color = COLOR_GOLD
 
-	preview_style.corner_radius_top_left = 8
-	preview_style.corner_radius_top_right = 8
-	preview_style.corner_radius_bottom_left = 8
-	preview_style.corner_radius_bottom_right = 8
+	preview_style.corner_radius_top_left = 10
+	preview_style.corner_radius_top_right = 10
+	preview_style.corner_radius_bottom_left = 10
+	preview_style.corner_radius_bottom_right = 10
 
 	preview_border.add_theme_stylebox_override(
 		"panel",
@@ -623,14 +422,11 @@ func _build_ui() -> void:
 
 	modal.add_child(preview_border)
 
-	# =====================================================
-	# IMAGEN GUÍA
-	# =====================================================
 	guide_preview = TextureRect.new()
 
-	guide_preview.position = Vector2(635, 55)
+	guide_preview.position = Vector2(1275, 55)
 
-	guide_preview.size = Vector2(150, 100)
+	guide_preview.size = Vector2(250, 170)
 
 	guide_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 
@@ -641,74 +437,26 @@ func _build_ui() -> void:
 	guide_preview.move_to_front()
 
 	# =====================================================
-	# MOVIMIENTOS
+	# BOTÓN RENDIRSE
 	# =====================================================
-	moves_label = Label.new()
+	surrender_button = Button.new()
 
-	moves_label.position = Vector2(30, 135)
+	surrender_button.text = "Rendirse"
 
-	moves_label.add_theme_font_size_override(
+	surrender_button.position = Vector2(1260, 300)
+
+	surrender_button.size = Vector2(280, 60)
+
+	surrender_button.add_theme_font_size_override(
 		"font_size",
-		18
+		22
 	)
 
-	moves_label.add_theme_color_override(
-		"font_color",
-		COLOR_GOLD
+	surrender_button.pressed.connect(
+		_on_surrender_pressed
 	)
 
-	modal.add_child(moves_label)
-
-	# =====================================================
-	# STATUS
-	# =====================================================
-	status_label = Label.new()
-
-	status_label.position = Vector2(250, 135)
-
-	status_label.text = "Intercambia piezas"
-
-	status_label.add_theme_font_size_override(
-		"font_size",
-		16
-	)
-
-	status_label.add_theme_color_override(
-		"font_color",
-		COLOR_GOLD_DIM
-	)
-
-	modal.add_child(status_label)
-
-	# =====================================================
-	# RESTART
-	# =====================================================
-	restart_button = Button.new()
-
-	restart_button.text = "Reiniciar"
-
-	restart_button.position = Vector2(520, 125)
-
-	restart_button.size = Vector2(120, 40)
-
-	restart_button.pressed.connect(_on_restart_pressed)
-
-	modal.add_child(restart_button)
-
-	# =====================================================
-	# CLOSE
-	# =====================================================
-	close_button = Button.new()
-
-	close_button.text = "X"
-
-	close_button.position = Vector2(760, 10)
-
-	close_button.size = Vector2(40, 40)
-
-	close_button.pressed.connect(queue_free)
-
-	modal.add_child(close_button)
+	modal.add_child(surrender_button)
 
 
 # =========================================================
@@ -729,16 +477,6 @@ func _animate_modal() -> void:
 
 
 # =========================================================
-# UPDATE UI
-# =========================================================
-func _update_ui() -> void:
-
-	if moves_label:
-
-		moves_label.text = "Movimientos: %d" % moves
-
-
-# =========================================================
 # CLEAR
 # =========================================================
 func _clear_pieces() -> void:
@@ -748,13 +486,3 @@ func _clear_pieces() -> void:
 		piece["sprite"].queue_free()
 
 	pieces.clear()
-
-
-# =========================================================
-# RESTART
-# =========================================================
-func _on_restart_pressed() -> void:
-
-	if map_texture:
-
-		start_game()
