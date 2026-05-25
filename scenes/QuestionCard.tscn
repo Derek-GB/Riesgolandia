@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dvs2h76k5p71l"]
+
+[ext_resource type="Script" uid="uid://ds3rw727iuxlh" path="res://scripts/QuestionCard.gd" id="1_44btj"]
+
+[node name="QuestionCard" type="CanvasLayer" unique_id=1797167580]
+script = ExtResource("1_44btj")

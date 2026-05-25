@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cyw7wn75p8l4i"]
+
+[ext_resource type="Script" uid="uid://541i24b2edqc" path="res://scripts/ActionCard.gd" id="1_xkd22"]
+
+[node name="ActionCard" type="CanvasLayer" unique_id=1943796220]
+script = ExtResource("1_xkd22")
