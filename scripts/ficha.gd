@@ -31,17 +31,16 @@ func move_steps(steps: int) -> void:
 		return
 	print("Ficha: move_steps llamado con pasos =", steps, " current_index =", current_index)
 	for i in range(steps):
+		# =========================================================
+		# SI ES EL ÚLTIMO WAYPOINT, NO AVANZAR MÁS
+		# =========================================================
 		if current_index >= waypoints.size() - 1:
-			print("Ficha: llegó al final en index", current_index)
-			reached_end.emit()
+			print("Ficha: ya está en el último waypoint, no avanza más")
 			return
 		current_index += 1
 		print("Ficha: moviendo a índice", current_index, " posición:", waypoints[current_index])
 		await _move_to(waypoints[current_index])
 		stepped_on.emit(current_index)
-	if current_index >= waypoints.size() - 1:
-		print("Ficha: llegó a la meta")
-		reached_end.emit()
 
 # =========================================================
 # MOVER PASOS HACIA ATRÁS

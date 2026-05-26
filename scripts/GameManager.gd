@@ -56,6 +56,9 @@ func on_dice_rolled(n: int) -> void:
 		print("GameManager: no hay tokens registrados")
 		return
 
+	# =========================================================
+	# CORREGIR ÍNDICE SI SE PASÓ
+	# =========================================================
 	if current_player >= tokens.size():
 		current_player = 0
 
@@ -70,6 +73,7 @@ func on_dice_rolled(n: int) -> void:
 			mensaje_label.text = "¡Pierdes este turno!"
 			await get_tree().create_timer(2.0).timeout
 			mensaje_label.visible = false
+		_desbloquear_dado()
 		_next_turn()
 		return
 
@@ -79,7 +83,7 @@ func on_dice_rolled(n: int) -> void:
 
 	await active_token.move_steps(n)
 
-	print("GameManager: movimiento completado")
+	print("GameManager: movimiento completado, casilla:", active_token.current_index)
 
 	# =========================================================
 	# CASILLA 3 — PUZZLE
@@ -87,6 +91,7 @@ func on_dice_rolled(n: int) -> void:
 	if active_token.current_index == 3:
 		await activar_casilla_3()
 		is_player_moving = false
+		_desbloquear_dado()
 		_next_turn()
 		return
 
@@ -96,6 +101,7 @@ func on_dice_rolled(n: int) -> void:
 	if active_token.current_index == 5:
 		await activar_casilla_5()
 		is_player_moving = false
+		_desbloquear_dado()
 		_next_turn()
 		return
 
@@ -110,6 +116,7 @@ func on_dice_rolled(n: int) -> void:
 	# CASILLA NORMAL
 	# =========================================================
 	is_player_moving = false
+	_desbloquear_dado()
 	_next_turn()
 
 # =========================================================
@@ -186,17 +193,19 @@ func activar_casilla_7(active_token) -> void:
 		print("GameManager: retrocediendo ficha")
 		await active_token.move_back(1)
 
-	# =========================================================
-	# LIBERAR TODO Y DESBLOQUEAR DADO
-	# =========================================================
 	minijuego_activo = false
 	is_player_moving = false
+	_desbloquear_dado()
+	_next_turn()
 
+# =========================================================
+# DESBLOQUEAR DADO
+# =========================================================
+func _desbloquear_dado() -> void:
 	var scene = get_tree().current_scene
 	if scene.has_node("UI/Dado"):
 		scene.get_node("UI/Dado").set_locked(false)
-
-	_next_turn()
+		print("GameManager: dado desbloqueado")
 
 # =========================================================
 # CAMBIAR TURNO
