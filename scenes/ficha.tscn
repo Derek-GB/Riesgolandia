@@ -5,5 +5,6 @@
 
 [node name="Ficha" type="Node3D" unique_id=1007468202]
 script = ExtResource("1_nkg04")
+speed = 20.0
 
 [node name="MeshFicha" parent="." unique_id=1633422855 instance=ExtResource("2_gfo57")]

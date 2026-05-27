@@ -64,7 +64,7 @@ func _move_to(target: Vector3) -> void:
 		return
 	var start: Vector3 = global_position
 	var distance: float = start.distance_to(target)
-	var duration: float = max(0.05, distance / speed)
+	var duration: float = max(0.09, distance / speed)
 	var elapsed: float = 0.0
 	while elapsed < duration:
 		await get_tree().process_frame
